@@ -27,6 +27,10 @@
         color: black;
       }
 
+      .clickable {
+        cursor: pointer;
+      }
+
       button {
         font-size: 14px;
       }
@@ -44,7 +48,7 @@
 
         <section>
           <div class="example">
-            <h2 id="capture"></h2>
+            <h3 id="capture"></h3>
             <div class="one clickable">
               <span>1</span>
               <div class="two clickable">
@@ -85,7 +89,7 @@
 
           <br />
           <p>Thank You!</p>
-          <p>Mateusz Wolsza (mateusz.wolsza@ubs.com)</p>
+          <p><a href="https://github.com/matma/usecapture-presentation">https://github.com/matma/usecapture-presentation</a></p>
         </section>
 
       </div>
@@ -95,8 +99,7 @@
   </body>
 
   <script>
-    Reveal.initialize({
-    })
+    Reveal.initialize({ })
 
     var output = document.querySelector('#output'),
         clickable = document.querySelectorAll('.clickable'),
@@ -122,7 +125,7 @@
     var append = function(el) {
       return function() {
         var text = document.createElement('div');
-        text.innerText = el.querySelector('span').innerText;
+        text.innerText = 'Clicked: ' + el.querySelector('span').innerText;
         text.className = el.classList[0];
         output.appendChild(text);
       }
@@ -135,7 +138,7 @@
         listeners.push(listener);
       } );
 
-      document.querySelector('#capture').innerText = 'Use capture = ' + useCapture;
+      document.querySelector('#capture').innerText = "element.addEventListener('click', function() {}, " + useCapture + ')';
     };
 
     addEvents();
