@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>addEventListener example</title>
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/solarized.css" id="theme">
+    <!--Add support for earlier versions of Internet Explorer -->
+    <!--[if lt IE 9]>
+      <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <style type="text/css" media="all">
+      .one {
+        background-color: green;
+        color: black;
+      }
+
+      .two {
+        background-color: gold;
+        color: black;
+      }
+
+      .three {
+        background-color: red;
+        color: black;
+      }
+
+      button {
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+
+        <section>
+          <h1>addEventListener - use capture</h1>
+          <p>A quick tale about least known parameter of function that everyone
+          knows</p>
+        </section>
+
+        <section>
+          <div class="example">
+            <h2 id="capture"></h2>
+            <div class="one clickable">
+              <span>1</span>
+              <div class="two clickable">
+                <span>2 nested in 1</span>
+                <div class="three clickable">
+                  <span>3 nested in 2 also nested in 1</span>
+                  <div></div>
+                </div>
+              </div>
+            </div>
+            <button id="toggle">Toggle useCapture</button>
+            <button id="clear">Clear</button>
+            <div id="output"></div>
+          </div>
+        </section>
+
+        <section>
+          <h3>Why there are two ways of handling events?</h3>
+          <p>As always there were two approches:</p>
+          <ul>
+            <li>Inner to outer (useCapture = false) by Netscape</li>
+            <li>Outer to inner (useCapture = true) by Microsoft</li>
+          </ul>
+          <p>As there were no agreement all browsers implements both models</p>
+          <p>Default is useCapture = <strong>false</strong></p>
+        </section>
+
+        <section>
+          <h3>When to use it?</h3>
+          <p>When listener needs to process every event, example:</p>
+          <img src="barcode-scanner.jpg" alt="Barcode scanner"/>
+        </section>
+
+        <section>
+          <h3>Shameless plug</h3>
+          <p>My own barcode scanner library</p>
+          <p><a href="https://github.com/soneta/BarcodeReaderJs">BarcodeReaderJS</a></p>
+
+          <br />
+          <p>Thank You!</p>
+          <p>Mateusz Wolsza (mateusz.wolsza@ubs.com)</p>
+        </section>
+
+      </div>
+    </div>
+
+    <script src="js/reveal.js"></script>
+  </body>
+
+  <script>
+    Reveal.initialize({
+    })
+
+    var output = document.querySelector('#output'),
+        clickable = document.querySelectorAll('.clickable'),
+        listeners = [],
+        useCapture = false;
+
+
+    document.querySelector('#clear')
+            .addEventListener('click', function() {
+              output.innerText = '';
+            } );
+
+    document.querySelector('#toggle')
+            .addEventListener('click', function() {
+              [].forEach.call(clickable, function(el) {
+                el.removeEventListener('click', listeners.shift(), useCapture);
+              })
+
+              useCapture = !useCapture;
+              addEvents();
+            })
+
+    var append = function(el) {
+      return function() {
+        var text = document.createElement('div');
+        text.innerText = el.querySelector('span').innerText;
+        text.className = el.classList[0];
+        output.appendChild(text);
+      }
+    };
+
+    var addEvents = function() {
+      [].forEach.call(clickable, function(el) {
+        var listener = append(el);
+        el.addEventListener('click', listener, useCapture );
+        listeners.push(listener);
+      } );
+
+      document.querySelector('#capture').innerText = 'Use capture = ' + useCapture;
+    };
+
+    addEvents();
+  </script>
+</html>
